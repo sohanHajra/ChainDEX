@@ -1,4 +1,3 @@
-
 import { Contract } from "@ethersproject/contracts";
 import { abis } from "@my-app/contracts";
 import { useCall } from "@usedapp/core";
@@ -15,7 +14,7 @@ export const getAvailableTokens = (pools) =>
   }, {});
 
 export const getCounterpartTokens = (pools, fromToken) => pools
-  .filter((cur) => cur.token0Address === fromToken || cur.token1Address)
+  .filter((cur) => cur.token0Address === fromToken || cur.token1Address === fromToken)
   .reduce((prev, curr) => {
     if (curr.token0Address === fromToken) {
       prev[curr.token1Address] = curr.token1Name;
@@ -24,7 +23,6 @@ export const getCounterpartTokens = (pools, fromToken) => pools
     }
     return prev;
   }, {});
-
 
 export const findPoolByTokens = (pools, fromToken, toToken) => {
   if (!Array.isArray(pools) || !fromToken || !toToken) return undefined;
@@ -35,12 +33,12 @@ export const findPoolByTokens = (pools, fromToken, toToken) => {
   );
 };
 
-export const isOperationPending = (operationState) => 
+export const isOperationPending = (operationState) =>
   operationState.status === "PendingSignature" || operationState.status === "Mining";
 export const isOperationFailed = (operationState) =>
-operationState.status === "Fail" || operationState.status === "Exception";
+  operationState.status === "Fail" || operationState.status === "Exception";
 export const isOperationSucceeded = (operationState) =>
-operationState.status === "Success";
+  operationState.status === "Success";
 
 export const getFailureMessage = (swapApproveState, swapExecuteState) => {
   if (isOperationPending(swapApproveState) || isOperationPending(swapExecuteState)) {
@@ -59,7 +57,7 @@ export const getFailureMessage = (swapApproveState, swapExecuteState) => {
 };
 
 export const getSuccessMessage = (swapApproveState, swapExecuteState) => {
-  if (isOperationPending(swapExecuteState) ||isOperationPending(swapApproveState)) {
+  if (isOperationPending(swapExecuteState) || isOperationPending(swapApproveState)) {
     return undefined;
   }
 
@@ -87,12 +85,11 @@ export const useAmountsOut = (pairAddress, amountIn, fromToken, toToken) => {
       }
     ) ?? {};
   return error ? parseUnits("0") : value?.amounts[1];
-}
+};
 
 export const useOnClickOutside = (ref, handler) => {
   useEffect(() => {
     const listener = (event) => {
-      // Do nothing if clicking ref's element or descendent elements
       if (!ref.current || ref.current.contains(event.target)) {
         return;
       }
@@ -107,4 +104,4 @@ export const useOnClickOutside = (ref, handler) => {
       document.removeEventListener("touchstart", listener);
     };
   }, [ref, handler]);
-}
+};
